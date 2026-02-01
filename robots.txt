@@ -1,0 +1,7 @@
+# robots.txt for receiptcalculator.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://receiptcalculator.com/sitemap.xml
