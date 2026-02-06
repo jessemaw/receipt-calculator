@@ -331,10 +331,10 @@
     gap: var(--spacing-2);
     padding: var(--spacing-4) var(--spacing-8);
     background: var(--gradient-orange);
-    color: var(--dark-900);
+    color: var(--dark-900) !important;
     font-size: var(--text-base);
     font-weight: var(--font-semibold);
-    text-decoration: none;
+    text-decoration: none !important;
     border-radius: var(--radius-lg);
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -342,6 +342,7 @@
 .article-cta-button:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-orange);
+    color: var(--dark-900) !important;
 }
 
 /* Responsive */
