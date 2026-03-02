@@ -14,6 +14,7 @@
     /* Brand Colors - Other Apps */
     --fetch-color: #FF6B35;
     --receiptpal-color: #4CAF50;
+    --ibotta-color: #C41230;
 
     /* Dark Theme Colors */
     --dark-950: #000000;
@@ -309,6 +310,11 @@ body {
     background: rgba(76, 175, 80, 0.1);
 }
 
+#ibotta-toggle.active {
+    border-color: var(--ibotta-color);
+    background: rgba(196, 18, 48, 0.1);
+}
+
 .toggle-logo {
     width: 24px;
     height: 24px;
@@ -332,6 +338,19 @@ body {
     width: 24px;
     height: 24px;
     background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    color: var(--white);
+}
+
+.toggle-logo.ibotta-logo {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #C41230 0%, #E8172E 100%);
     border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
@@ -807,6 +826,22 @@ body {
 .results-panel.receiptpal-mode .referral-icon {
     background: rgba(76, 175, 80, 0.15);
     color: var(--receiptpal-color);
+}
+
+/* Ibotta Mode Styling */
+.results-panel.ibotta-mode {
+    border-color: var(--ibotta-color);
+    box-shadow: 0 0 40px rgba(196, 18, 48, 0.15);
+}
+
+.results-panel.ibotta-mode .main-result {
+    background: linear-gradient(135deg, #E8172E 0%, #C41230 100%);
+}
+
+.results-panel.ibotta-mode .receipt-icon,
+.results-panel.ibotta-mode .referral-icon {
+    background: rgba(196, 18, 48, 0.15);
+    color: var(--ibotta-color);
 }
 
 /* Comparison Summary Box */

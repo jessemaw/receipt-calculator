@@ -1,14 +1,14 @@
 /**
  * Receipt Rewards Calculator
  * Calculates potential earnings based on receipt scanning habits
- * Compares Crinkl, Fetch Rewards, and ReceiptPal
+ * Compares Crinkl, Fetch Rewards, ReceiptPal, and Ibotta
  */
 
 // Current app being displayed
 let currentApp = 'crinkl';
 
 // All available apps for comparison
-const APP_LIST = ['crinkl', 'fetch', 'receiptpal'];
+const APP_LIST = ['crinkl', 'fetch', 'receiptpal', 'ibotta'];
 
 // Constants - Crinkl Points System
 const CRINKL_CONFIG = {
@@ -77,12 +77,28 @@ const RECEIPTPAL_CONFIG = {
     accentColor: '#4CAF50'
 };
 
+// Constants - Ibotta System
+const IBOTTA_CONFIG = {
+    name: 'Ibotta',
+    // ~$0.50 average cashback per receipt (assumes active offer redemption;
+    // base "any receipt" is ~$0.10 at grocery stores; active users earn $250+/yr)
+    USD_PER_RECEIPT: 0.50,
+    // ~$7 per referral to the referrer (new user gets $5 sign-up bonus separately)
+    REFERRAL_USD: 7.00,
+    HAS_STREAKS: false,
+    HAS_WEEKLY_BONUS: false,
+    HAS_CATEGORIES: false,
+    HAS_HOLDINGS: false,
+    accentColor: '#C41230'
+};
+
 // DOM Elements
 const elements = {
     // App toggle buttons
     crinklToggle: document.getElementById('crinkl-toggle'),
     fetchToggle: document.getElementById('fetch-toggle'),
     receiptpalToggle: document.getElementById('receiptpal-toggle'),
+    ibottaToggle: document.getElementById('ibotta-toggle'),
 
     // Sliders
     yearsSlider: document.getElementById('years-slider'),
@@ -331,6 +347,43 @@ function calculateReceiptPalEarnings() {
 }
 
 /**
+ * Calculate Ibotta earnings
+ * Ibotta is offer-based: users redeem product-specific offers when scanning receipts
+ */
+function calculateIbottaEarnings() {
+    const years = parseInt(elements.yearsSlider.value);
+    const receiptsPerDay = parseInt(elements.receiptsSlider.value);
+    const referrals = parseInt(elements.referralsSlider.value);
+
+    const totalDays = years * 365;
+    const totalReceipts = totalDays * receiptsPerDay;
+
+    const receiptsUSD = totalReceipts * IBOTTA_CONFIG.USD_PER_RECEIPT;
+    const referralUSD = referrals * IBOTTA_CONFIG.REFERRAL_USD;
+    const totalUSD = receiptsUSD + referralUSD;
+
+    return {
+        totalPoints: 0,
+        totalUSD,
+        monthlyUSD: totalUSD / (years * 12),
+        yearlyUSD: totalUSD / years,
+        totalReceipts,
+        receiptsPoints: 0,
+        receiptsUSD,
+        usesDirectCash: true,
+        effectiveStreakDays: 0,
+        streakPoints: 0,
+        weeksQualified: 0,
+        weeklyPoints: 0,
+        referrals,
+        referralPoints: 0,
+        referralUSD,
+        holdingsMultiplier: 1,
+        holdingsTierDescription: 'N/A'
+    };
+}
+
+/**
  * Get earnings for a specific app
  */
 function getEarningsForApp(appName) {
@@ -338,6 +391,7 @@ function getEarningsForApp(appName) {
         case 'crinkl': return calculateCrinklEarnings();
         case 'fetch': return calculateFetchEarnings();
         case 'receiptpal': return calculateReceiptPalEarnings();
+        case 'ibotta': return calculateIbottaEarnings();
         default: return calculateCrinklEarnings();
     }
 }
@@ -350,6 +404,7 @@ function getConfigForApp(appName) {
         case 'crinkl': return CRINKL_CONFIG;
         case 'fetch': return FETCH_CONFIG;
         case 'receiptpal': return RECEIPTPAL_CONFIG;
+        case 'ibotta': return IBOTTA_CONFIG;
         default: return CRINKL_CONFIG;
     }
 }
@@ -384,7 +439,8 @@ function switchApp(app) {
     const toggleButtons = [
         elements.crinklToggle,
         elements.fetchToggle,
-        elements.receiptpalToggle
+        elements.receiptpalToggle,
+        elements.ibottaToggle
     ];
 
     toggleButtons.forEach(btn => {
@@ -396,10 +452,11 @@ function switchApp(app) {
         case 'crinkl': elements.crinklToggle?.classList.add('active'); break;
         case 'fetch': elements.fetchToggle?.classList.add('active'); break;
         case 'receiptpal': elements.receiptpalToggle?.classList.add('active'); break;
+        case 'ibotta': elements.ibottaToggle?.classList.add('active'); break;
     }
 
     // Update results panel class for styling
-    elements.resultsPanel.classList.remove('crinkl-mode', 'fetch-mode', 'receiptpal-mode');
+    elements.resultsPanel.classList.remove('crinkl-mode', 'fetch-mode', 'receiptpal-mode', 'ibotta-mode');
     elements.resultsPanel.classList.add(`${app}-mode`);
 
     // Show/hide Crinkl-specific inputs (streaks, holdings)
@@ -444,7 +501,8 @@ function updateUI() {
     const allResults = {
         crinkl: calculateCrinklEarnings(),
         fetch: calculateFetchEarnings(),
-        receiptpal: calculateReceiptPalEarnings()
+        receiptpal: calculateReceiptPalEarnings(),
+        ibotta: calculateIbottaEarnings()
     };
 
     // Get current app results
@@ -646,6 +704,13 @@ function initEventListeners() {
     if (elements.receiptpalToggle) {
         elements.receiptpalToggle.addEventListener('click', () => {
             switchApp('receiptpal');
+            updateAllSliders();
+        });
+    }
+
+    if (elements.ibottaToggle) {
+        elements.ibottaToggle.addEventListener('click', () => {
+            switchApp('ibotta');
             updateAllSliders();
         });
     }
