@@ -83,6 +83,10 @@ const IBOTTA_CONFIG = {
     // ~$0.50 average cashback per receipt (assumes active offer redemption;
     // base "any receipt" is ~$0.10 at grocery stores; active users earn $250+/yr)
     USD_PER_RECEIPT: 0.50,
+    // Offer availability caps earnings regardless of receipt volume.
+    // Active users average ~$250+/yr; $5/week receipt cap reflects real-world
+    // offer redemption ceiling (Ibotta, 2024).
+    MAX_WEEKLY_USD: 5.00,
     // ~$7 per referral to the referrer (new user gets $5 sign-up bonus separately)
     REFERRAL_USD: 7.00,
     HAS_STREAKS: false,
@@ -356,9 +360,16 @@ function calculateIbottaEarnings() {
     const referrals = parseInt(elements.referralsSlider.value);
 
     const totalDays = years * 365;
+    const totalWeeks = years * 52;
     const totalReceipts = totalDays * receiptsPerDay;
 
-    const receiptsUSD = totalReceipts * IBOTTA_CONFIG.USD_PER_RECEIPT;
+    // Cap weekly receipt earnings at MAX_WEEKLY_USD to reflect real-world
+    // offer availability limits (can't linearly scale by scanning more receipts)
+    const weeklyReceiptUSD = Math.min(
+        receiptsPerDay * 7 * IBOTTA_CONFIG.USD_PER_RECEIPT,
+        IBOTTA_CONFIG.MAX_WEEKLY_USD
+    );
+    const receiptsUSD = weeklyReceiptUSD * totalWeeks;
     const referralUSD = referrals * IBOTTA_CONFIG.REFERRAL_USD;
     const totalUSD = receiptsUSD + referralUSD;
 
