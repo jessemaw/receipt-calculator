@@ -674,7 +674,7 @@ function handleSliderInput(slider) {
     // Update slider track fill based on current app
     const config = getConfigForApp(currentApp);
     const fillColor = config.accentColor;
-    slider.style.background = `linear-gradient(to right, ${fillColor} 0%, ${fillColor} ${percentage}%, #262626 ${percentage}%, #262626 100%)`;
+    slider.style.background = `linear-gradient(to right, ${fillColor} 0%, ${fillColor} ${percentage}%, #E8E6E1 ${percentage}%, #E8E6E1 100%)`;
 }
 
 /**
